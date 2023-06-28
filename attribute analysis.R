@@ -10,6 +10,7 @@ head(d)
 pattern<-"EPA|MaxLength|MaxWidth|MaxThickness|TechLength|MaxTechWidth|MidThickness|PlatformWidth|PlatformThickness"
 d[,grep(pattern,names(d))]
 
+d$EPA<-as.numeric(d$EPA)
 depths<-as.character(unique(sort(d$DepthStartcmbd, decreasing=FALSE)))
 
 d$DepthStartcmbd<-as.character(d$DepthStartcmbd)
@@ -33,3 +34,27 @@ ggplot(data=d)+
   geom_point(aes(x=DepthStartcmbd, y=TechLength, color=CortexArea))
 
 
+## 
+ggplot(data=d)+
+  geom_point(aes(x=TechLength, y=MaxTechWidth))
+
+ggplot(data=d)+
+  geom_point(aes(x=EPA, y=TechLength))
+
+ggplot(data=d)+
+  geom_point(aes(x=PlatformWidth*PlatformThickness, y=TechLength))
+
+
+ggplot(data=d)+
+  geom_boxplot(aes(x=BULB, y=MidThickness))
+
+ggplot(data=d)+
+  geom_boxplot(aes(x=LIP, y=(TechLength*MaxTechWidth)/Mass))
+max(d$Mass)
+
+## Troubleshooting function
+
+get.problem<-function(d,x){
+  d
+  
+}
