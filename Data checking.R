@@ -1,6 +1,7 @@
 library(here)
 library(readxl)
 library(ggplot2)
+library(vegan)
 setwd(here::here())
 d<-read_xlsx("LBJ attribute data.xlsx", sheet=1)
 
@@ -65,6 +66,11 @@ for(i in 1:length(grp.list)){
 data$lvl<-as.factor(data$lvl)
 levels(data$lvl)<-grp.labs
 
+
+diversity(table(d$Munsell), "shannon")
+diversity(table(d$Munsell), "simpson")
+diversity(table(d$Munsell), "invsimpson")
+
 GL317<-data[which(data$SITE=="41GL317"),]
 title<-paste("GL317", "Weights recorded in levels", collapse=" ")
 pdf(paste(title,".pdf",collapse=""), width=8, height =7)
@@ -72,8 +78,9 @@ ggplot(data=GL317, aes(x=Mass,y=lvl)) +
   stat_summary(fun = sum, na.rm = TRUE, color = 'black', geom ='line', size=1.2) +
   stat_summary(fun = sum, na.rm = TRUE, color = 'black', geom ='point', size=2) +
   scale_y_discrete(limits = rev(levels(data$lvl)))+ facet_wrap(~context) 
-
 dev.off()
+
+
 
 notGL317<-data[which(data$SITE!="41GL317"),]
 title<-paste("NonGL317", "Weights recorded in levels", collapse=" ")
