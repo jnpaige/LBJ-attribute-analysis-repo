@@ -107,9 +107,11 @@ munsell.converter("10YR",3,4)
 
 #Read in data
 d<-read_xlsx("LBJ attribute data.xlsx")
-
+d2<-read_xlsx("BX232 artifact colors.xlsx")
 ## break up string into hue, chroma and value
-
+d<-d[grep("SITE|Munsell|Mass", names(d))]
+d2<-d2[grep("SITE|Munsell|Mass", names(d2))]
+d<-rbind(d, d2)
 color<-paste("7.5yr7/2")
 
 hue<-str_replace(color, "(.)[/](.)", "")
@@ -133,7 +135,7 @@ for(i in 1:length(d$Munsell)){
 p <- plot_ly(data=d) %>%
   # the scatter plot of the data points 
   add_trace(x=d$colorx, y=d$colory, z=d$colorz,
-            color=d$EvidencePostDepBurning,
+            color=d$SITE,
             type="scatter3d", mode="markers",
             colors = "Set1",
             hoverinfo = "text",
