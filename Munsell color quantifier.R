@@ -89,8 +89,6 @@ v2<-c(0.000000000,
 5.969026042,
 6.126105675)
 
-
-
 munsell.converter<-function(hue, chroma, value){
   hue.angle<-v2[which(v1==hue)]
   coordinate<-c(sin(hue.angle)*chroma, cos(hue.angle)*chroma,value)

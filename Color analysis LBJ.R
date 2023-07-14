@@ -1,6 +1,8 @@
 library(here)
 library(readxl)
 library(stringr)
+library(dplyr)
+library(plyr)
 library(plotly)
 library(vegan)
 
@@ -42,12 +44,6 @@ for(i in 1:length(d$Munsell)){
 jitterfy<-function(x){
   return(rnorm(1,x, .1))
 }
-
-jitterfy(d$colorx)
-
-d$colorx
-
-apply(d$,1,jitterfy)
 
 
 for(i in 1:length(d$colorx)){d$jitterx[i]<-jitterfy(d$colorx[i])}
@@ -98,10 +94,15 @@ p <- plot_ly(data=d) %>%
 #Let's try just the Chroma /sheet and value (z). The pca
 #doesn't seem to capture colo simil all that well. 
 
+
+find_hull <- function(x) x[chull(x$colorx, x$colorz), ]
+hulls <- ddply(d, "EvidencePostDepBurning", find_hull)
+
 ggplot(data=d) +
-  geom_jitter(aes(x=colorx, y=colorz, fill=d$EvidencePostDepBurning), 
+  geom_jitter(aes(x=colorx, y=colorz, fill=EvidencePostDepBurning), 
               width=.1, height=.1,
               alpha=.8, shape=21,size=2,
-              color="black")
+              color="black") + 
+  geom_polygon(data = hulls, aes(x=colorx, y=colorz, fill=EvidencePostDepBurning), alpha = 0.5)
 
-rnorm(1,d$colorx,.1)
+
