@@ -5,15 +5,19 @@ library(dplyr)
 library(plyr)
 library(plotly)
 library(vegan)
+library(ggalt)
 
 #Test the function. 
 #Load function.
 
 source("Munsell color quantifier.R")
-
+source("Convex hull function.R")
+source("Clean Data.R")
 
 #Read in data
 d<-read_xlsx("LBJ attribute data.xlsx")
+d<-clean.data(d)
+
 d2<-read_xlsx("BX232 artifact colors.xlsx")
 
 # Add bx232 data here
@@ -96,13 +100,13 @@ p <- plot_ly(data=d) %>%
 
 
 find_hull <- function(x) x[chull(x$colorx, x$colorz), ]
-hulls <- ddply(d, "EvidencePostDepBurning", find_hull)
+test<-d[which(d$colorz>0),]
+hulls <- ddply(test, "EvidencePostDepBurning", find_hull)
 
-ggplot(data=d) +
-  geom_jitter(aes(x=colorx, y=colorz, fill=EvidencePostDepBurning), 
-              width=.1, height=.1,
+ggplot(data=test, aes(x=colorx, y=colorz, fill=SITE)) +
+  geom_jitter(width=.1, height=.1,
               alpha=.8, shape=21,size=2,
               color="black") + 
-  geom_polygon(data = hulls, aes(x=colorx, y=colorz, fill=EvidencePostDepBurning), alpha = 0.5)
+  geom_bag(prop=.9)
 
 
