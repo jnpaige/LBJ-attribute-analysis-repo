@@ -20,7 +20,10 @@ for(i in 1:length(d$Munsell)){
   d$colorz[i]<-as.numeric(output[3])
 }
 
+
+unique(d$Provenience)
 GL317<-d[which(d$SITE=="41GL317"),]
+
 title<-paste("GL317", "Weights recorded in levels", collapse=" ")
 pdf(paste(title,".pdf",collapse=""), width=8, height =7)
 ggplot(data=GL317, aes(x=Mass,y=lvl)) +
@@ -40,4 +43,14 @@ ggplot(data=notGL317, aes(x=Mass,y=lvl)) +
   scale_y_discrete(limits = rev(levels(data$lvl)))+ facet_wrap(~context) 
 
 dev.off()
+
+
+
+
+
+GL317east<-GL317[which(d$Provenience %in% c(1,2,3,4,5)),]
+length(GL31)
+
+
+
 

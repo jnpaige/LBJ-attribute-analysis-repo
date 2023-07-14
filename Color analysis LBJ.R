@@ -6,7 +6,6 @@ library(plyr)
 library(plotly)
 library(vegan)
 library(ggalt)
-
 #Test the function. 
 #Load function.
 
@@ -17,20 +16,26 @@ source("Clean Data.R")
 #Read in data
 d<-read_xlsx("LBJ attribute data.xlsx")
 d<-clean.data(d)
+d2<-read_xlsx("raw material survey data.xlsx", sheet=4)
 
-d2<-read_xlsx("BX232 artifact colors.xlsx")
 
-# Add bx232 data here
-#d<-d[grep("SITE|Munsell|Mass", names(d))]
-#d2<-d2[grep("SITE|Munsell|Mass", names(d2))]
-#d<-rbind(d, d2)
+names(d2)[1]<-"SITE"
 
-# Test the function
-color<-paste("7.5yr7/2")
-hue<-str_replace(color, "(.)[/](.)", "")
-chroma<-as.numeric(str_match(color, "(.)[/](.)"))[2]
-value<-as.numeric(str_match(color, "(.)[/](.)"))[3]
-munsell.converter(hue,value, chroma)
+temp<-d[grep("SITE|Munsell", names(d))]
+temp2<-d2[grep("SITE|Munsell", names(d2))]
+d2<-rbind(temp, temp2)
+
+for(i in 1:length(d2$Munsell)){
+  color<-d2$Munsell[i]
+  hue<-str_replace(color, "(.)[/](.)", "")
+  chroma<-as.numeric(str_match(color, "(.)[/](.)"))[2]
+  value<-as.numeric(str_match(color, "(.)[/](.)"))[3]
+  output<-munsell.converter(hue, value,chroma)
+  d2$colorx[i]<-as.numeric(output[1])
+  d2$colory[i]<-as.numeric(output[2])
+  d2$colorz[i]<-as.numeric(output[3])
+}
+
 
 
 ## Apply function to every artifact in the dataset. 
@@ -54,16 +59,18 @@ for(i in 1:length(d$colorx)){d$jitterx[i]<-jitterfy(d$colorx[i])}
 for(i in 1:length(d$colory)){d$jittery[i]<-jitterfy(d$colory[i])}
 for(i in 1:length(d$colorz)){d$jitterz[i]<-jitterfy(d$colorz[i])}
 
+for(i in 1:length(d2$colorx)){d2$jitterx[i]<-jitterfy(d2$colorx[i])}
+for(i in 1:length(d2$colory)){d2$jittery[i]<-jitterfy(d2$colory[i])}
+for(i in 1:length(d2$colorz)){d2$jitterz[i]<-jitterfy(d2$colorz[i])}
 
 
-p <- plot_ly(data=d) %>%
-  # the scatter plot of the data points 
-  add_trace(x=d$jitterx, y=d$jittery, z=d$jitterz,
-            color=d$LithicArtifactClass,
+
+p <- plot_ly(data=d2) %>%
+  add_trace(x=jitterx, y=jittery, z=jitterz,
+            color=SITE,
             type="scatter3d", mode="markers",
             colors = "Set1",
             hoverinfo = "text",
-            hovertext=paste(d$Munsell, d$LithicArtifactClass),
             jitter = 0.7,
             marker = list(opacity = .5, size=4))
 
@@ -99,11 +106,7 @@ p <- plot_ly(data=d) %>%
 #doesn't seem to capture colo simil all that well. 
 
 
-find_hull <- function(x) x[chull(x$colorx, x$colorz), ]
-test<-d[which(d$colorz>0),]
-hulls <- ddply(test, "EvidencePostDepBurning", find_hull)
-
-ggplot(data=test, aes(x=colorx, y=colorz, fill=SITE)) +
+ggplot(data=d2, aes(x=colorx, y=colorz, fill=SITE)) +
   geom_jitter(width=.1, height=.1,
               alpha=.8, shape=21,size=2,
               color="black") + 
