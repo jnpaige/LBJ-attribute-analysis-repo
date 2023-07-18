@@ -49,6 +49,9 @@ grp.labs<-c("10-20",
             "130-140",
             "140-150",
             "150+")
+grp.labs<-seq(1,15,by=1)
+
+
 
 
 d$lvl<-NA
@@ -58,5 +61,7 @@ for(i in 1:length(grp.list)){
 }
 data$lvl<-as.factor(data$lvl)
 levels(data$lvl)<-grp.labs
+
+data$areabymass<-c(d$TechLength*d$MaxTechWidth)/d$Mass
 
 return(data)}
